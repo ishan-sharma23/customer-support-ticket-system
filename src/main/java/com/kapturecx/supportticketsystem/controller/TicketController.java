@@ -1,6 +1,9 @@
 package com.kapturecx.supportticketsystem.controller;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +39,13 @@ public class TicketController {
 	}
 
 	@GetMapping
-	public List<TicketResponse> getTickets() {
-		return ticketService.getTickets();
+	public Page<TicketResponse> getTickets(
+			@RequestParam(required = false) String status,
+			@RequestParam(required = false) Long agentId,
+			@RequestParam(required = false) String requesterEmail,
+			@RequestParam(required = false) String subject,
+			@PageableDefault(size = 20) Pageable pageable) {
+		return ticketService.getTickets(status, agentId, requesterEmail, subject, pageable);
 	}
 
 	@GetMapping("/{id}")

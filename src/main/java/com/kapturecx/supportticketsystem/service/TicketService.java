@@ -1,6 +1,9 @@
 package com.kapturecx.supportticketsystem.service;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +18,7 @@ import com.kapturecx.supportticketsystem.model.Ticket;
 import com.kapturecx.supportticketsystem.model.TicketStatus;
 import com.kapturecx.supportticketsystem.repository.AgentRepository;
 import com.kapturecx.supportticketsystem.repository.TicketRepository;
+import com.kapturecx.supportticketsystem.repository.TicketSpecifications;
 
 @Service
 @Transactional
@@ -36,6 +40,25 @@ public class TicketService {
 	@Transactional(readOnly = true)
 	public List<TicketResponse> getTickets() {
 		return ticketRepository.findAll().stream().map(this::toResponse).toList();
+	}
+
+	@Transactional(readOnly = true)
+	public Page<TicketResponse> getTickets(String status, Long agentId, String requesterEmail, String subject, Pageable pageable) {
+		TicketStatus ticketStatus = null;
+		if (status != null && !status.isBlank()) {
+			try {
+				ticketStatus = TicketStatus.valueOf(status.toUpperCase());
+			} catch (IllegalArgumentException e) {
+				throw new IllegalStateException("Invalid ticket status: " + status);
+			}
+		}
+
+		Specification<Ticket> spec = Specification.where(TicketSpecifications.hasStatus(ticketStatus))
+				.and(TicketSpecifications.hasAssignedAgentId(agentId))
+				.and(TicketSpecifications.requesterEmailContains(requesterEmail))
+				.and(TicketSpecifications.subjectContains(subject));
+
+		return ticketRepository.findAll(spec, pageable).map(this::toResponse);
 	}
 
 	@Transactional(readOnly = true)

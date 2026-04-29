@@ -38,3 +38,7 @@ A Spring Boot REST API for managing customer support tickets, assigning agents, 
 ## Database
 
 The app uses an in-memory H2 database for local development.
+
+## API Documentation
+
+Swagger/OpenAPI UI is available (when running) at: `/swagger-ui.html` and the raw OpenAPI JSON at `/v3/api-docs`.

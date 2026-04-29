@@ -22,3 +22,4 @@
 - Spring Validation: validates request payloads.
 - H2 Database: stores data locally during development.
 - Spring Boot Test: supports application and controller tests.
+ - springdoc-openapi-starter-webmvc-ui: provides Swagger/OpenAPI UI for API exploration.
